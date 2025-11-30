@@ -114,8 +114,8 @@ card-api/
 
 1. Clone o repositório:
 ```bash
-git clone <repository-url>
-cd card-api
+git clone https://github.com/cleversonmelo89/hyperativa-api-card.git
+cd hyperativa-api-card
 ```
 
 2. Execute o docker-compose:
