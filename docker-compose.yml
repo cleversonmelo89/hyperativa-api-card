@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: card-api-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: carddb
+      MYSQL_USER: carduser
+      MYSQL_PASSWORD: cardpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - card-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: card-api-app
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: carddb
+      DB_USER: root
+      DB_PASSWORD: root
+      JWT_SECRET: mySecretKeyForJWTTokenGenerationThatShouldBeAtLeast256BitsLong
+      JASYPT_PASSWORD: myJasyptPasswordForEncryption
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - card-network
+
+volumes:
+  mysql_data:
+
+networks:
+  card-network:
+    driver: bridge
+
+
